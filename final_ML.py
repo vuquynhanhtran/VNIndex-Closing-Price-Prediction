@@ -269,10 +269,13 @@ class DecisionTreeRegressor:
 
 class RandomForestRegressor:
   def __init__(self, n_trees, max_depth, min_samples_split): #store config
+    
     self.n_trees = n_trees #numer of trees
     self.max_depth = max_depth #max_depth
     self.min_samples_split = min_samples_split #minimum number of values for splitting
     self.trees = [] #storing trees
+
+      
     self.best_num_trees = 0 #this is early stopping logic: add tree one by one, we want to track when val_loss is lowest and remember how many trees there were
     #this is to track both training and validation loss
     self.train_losses = [] #list for tracking training loss across each tree added
