@@ -17,10 +17,6 @@ train_df = pd.read_csv("train.csv")
 val_df = pd.read_csv("val.csv")
 test_df = pd.read_csv("test.csv")
 
-for df in [train_df, val_df, test_df]:
-    for col in ["Open", "High", "Low"]:
-        df = df[df[col] < 10]
-
 
 # Re-assign each dataframe after filtering
 train_df = train_df[(train_df["Open"] < 10) & (train_df["High"] < 10) & (train_df["Low"] < 10)]
@@ -63,31 +59,31 @@ x_test = test_df[feature_cols].values
 y_test = test_df[target_col].values
 
 # === 4. Scale Features ===
-def scale(x):
+def scale(x): #so that each column get a mean 0 and standard deviation 1
     mean = x.mean(axis=0)
     std = x.std(axis=0)
     return (x - mean) / std, mean, std
 
 x_train_scaled, train_mean, train_std = scale(x_train)
-x_val_scaled = (x_val - train_mean) / train_std
+x_val_scaled = (x_val - train_mean) / train_std #validation and test data use training mean and std to avoid data leakage.
 x_test_scaled = (x_test - train_mean) / train_std
 
-# === 5. Add Bias Term ===
+# === 5. Add Bias Term === # adding the intercept
 x_train_bias = np.c_[np.ones(x_train_scaled.shape[0]), x_train_scaled]
 x_val_bias = np.c_[np.ones(x_val_scaled.shape[0]), x_val_scaled]
 x_test_bias = np.c_[np.ones(x_test_scaled.shape[0]), x_test_scaled]
 
-# === 6. Initialize Weights ===
+# === 6. Initialize Weights === # initialize the weights.
 n_features = x_train_bias.shape[1]
 weights = np.zeros(n_features)
 
 # === 7. Ridge Parameters ===
-lambda_val = 1.0
-learning_rate = 0.01
-n_epochs = 250
+lambda_val = 1.0 #penalty strength. bigger values give smaller weights
+learning_rate = 0.01 #step size for each update
+n_epochs = 250 #number of passes of gradient descent
 
-# === 8. Tracking Loss ===
-train_losses = []
+# === 8. Tracking Loss === #use to plot the learning curve later on
+train_losses = [] 
 val_losses = []
 
 # === 9. Training Loop ===
